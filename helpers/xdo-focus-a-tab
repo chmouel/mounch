@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Author: Chmouel Boudjnah <chmouel@chmouel.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+# This goes over all your tab of a TOOL (i.e: chrome) and see for the title, if
+# it can't find it it does a CTRL-TAB and follow thru. Originally from a
+# stackoverflow answer which i can't seem to find anymore.
+#
+# You need xdotool and wmctrl
+set -eux
+TOOL=${1}
+TITLE="${2}"
+URL="${3}"
+
+[[ -z ${URL} ]] && {
+    echo "tool title url"
+    exit 1
+}
+set -eux
+MAXSEARCH=5
+
+function searchtitle() {
+    local id=$1
+    local title="$2"
+    local winid_HEX
+    winid_HEX=$(printf "0x%x" "$id")
+    ctitle=$(xwininfo -id "${id}"|grep "xwininfo: Window id: ${winid_HEX}")
+    echo "${ctitle}"|grep -q ".*${title}" && {
+        echo "found"
+        return
+    }
+    echo "${ctitle}"
+}
+
+id=$(wmctrl -lx |sed -n "/${TOOL}/ { s/ .*//;p ;}"|head -1) 
+xdotool windowactivate "${id}"
+xdotool key "ctrl+1"
+firstitle=$(searchtitle "${id}" "${TITLE}")
+[[ ${firstitle} == found ]] && exit 0
+
+lock=0
+while true;do
+    title=$(searchtitle "${id}" "${TITLE}")
+    if [[ ${title} == "found" ]];then
+        exit
+    fi
+    xdotool key "ctrl+Tab"
+    [[ ${lock} -gt 0 && "${title}" == "${firstitle}" ]] && break    
+    sleep 1
+    [[ $lock -gt ${MAXSEARCH} ]] && break
+    lock=$((lock+1))
+done
+
+"${TOOL}" "${URL}"

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Allow to control kitty https://sw.kovidgoyal.net/kitty/
+#
+# It will detect the socket (hopefully you should have only one)
+# It will by default launch kitty script commands to it
+# It has a simple raise to focus support for example if you do :
+#
+# kitty-ctrl -t TITLE Binary
+#
+# It will go over the tabs with TITLE see if it's there and then focus or launch
+# a tab with the binary  name Binary and set the tab tile as TITLE to it.
+# 
+# you will need this configuration in your kitty.conf :
+#    allow_remote_control yes
+#    listen_on unix:/tmp/mykitty
+#
+socket=$(find /tmp -maxdepth 1 -type s -name "mykitty-*" -print|head -1)
+export KITTY_LISTEN_ON=unix:${socket}
+
+if [[ -n $2 && $1 == "jump" ]];then
+    shift
+    while getopts "t:" arg; do
+        case $arg in
+            t)
+                title=$OPTARG
+                echo $strength
+                ;;
+            *)
+                echo "unkown option: ${OPTARG}";
+                exit 1
+                ;;
+        esac
+    done    
+    shift $((OPTIND-1))
+
+    [[ -z ${title} ]] && title=${1^}
+    args=$@
+    if [[ -z ${socket} ]];then
+        exec /usr/bin/kitty "${args}" &
+        exit 0
+    fi
+    
+    kitty @ focus-window --match title:"$title" 2>/dev/null || {
+        kitty @ launch --type=tab --tab-title "${title}" --title "${title}" ${args} &&
+            kitty @ focus-window --match title:"${title}"
+    }
+    exit
+fi
+
+[[ -z ${socket} ]] && exit 1
+
+kitty @ "$@"
+exit $?

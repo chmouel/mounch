@@ -1,0 +1,76 @@
+# mounch - a simple ROFI launcher 😋
+
+## DESCRIPTION
+
+Mounch is a simple launcher using ROFI backed by a yaml configuration file.
+You define a set of configuration blocks for some custom commands and it will show them.
+
+I did not want to have to create .desktop for every apps I want with .desktop,
+and wanted to show only the thing i need instead of every apps i had on my
+system so I built this simple launcher.
+
+The items are sorted by frequency or as the order coming from the
+`mounch.yaml` config file.
+
+## REQUIREMENTS
+
+* [rofi](https://github.com/davatorium/rofi) >= 1.6.0
+* [PyYaml ](https://pypi.org/project/PyYAML/)
+
+## SCREENSHOT
+
+![screenshot](./.github/screenshot.png)
+
+## INSTALLATION
+
+1. Checkout this repository with git :
+
+        mkdir ~/git/
+        git clone https://github.com/chmouel/mounch  ~/git/mounch
+    
+2. Copy the theme to your rofi config directory :
+
+        mkdir -p ~/.config/rofi && cp ~/git/mounch/rofi/mounch.rasi ~/.config/rofi/
+
+3. Setup your `mounch.yaml` in `~/.config/mounch/mounch.yaml` look at the example [here](./mounch.yaml).
+
+4. Depending on how you setup your desktop setup a key to launch the [main script](./mounch.py)
+   in `~/git/mounch/mounch.py` if you have followed thru.
+
+5. Install [pyyaml](https://pypi.org/project/PyYAML/) python library (which you
+   probably have already), packages are called
+
+## CONFIGURATION
+
+The basic defintion look like this : 
+
+```yaml
+firefox:
+  binary: gtk-launch
+  args: firefox
+  description: "Firefox"
+  icon: firefox
+```
+
+You are starting by a unique id as a key from this yaml snippet called firefox,
+you launch a binary called
+[gtk-launch](https://developer.gnome.org/gtk3/stable/gtk-launch.html) which is a
+standard gtk tool who launch your desktop application, you give the args
+`firefox` and you use the icon firefox which is picked up from your local icon
+files.
+
+* args can be a list, ie: 
+    args: `["firefox", "https://linux.com/"]`
+    
+* binaries are looked into your path.
+* the icons is the standard freedesktop ones, add new ones in for example: 
+
+    `~/.local/share/icons/hicolor/scalable/apps/`
+
+see a most complete example [here](./mounch.yaml).
+
+
+## Misc
+
+* *License*: Apache License
+* *Authors*: Chmouel Boudjnah <chmouel@chmouel.com>
