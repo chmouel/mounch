@@ -2,15 +2,14 @@
 
 ## DESCRIPTION
 
-Mounch is a simple launcher using ROFI backed by a yaml configuration file.
-You define a set of configuration blocks for some custom commands and it will show them.
+Mounch is a simple launcher using [ROFI](https://github.com/davatorium/rofi) backed by a yaml configuration file.
 
-I did not want to have to create .desktop for every apps I want with .desktop,
-and wanted to show only the thing i need instead of every apps i had on my
-system so I built this simple launcher.
-
-The items are sorted by frequency or as the order coming from the
+You simply define a set of configuration blocks for some custom commands and it will show them with the awesome rofi. The items are sorted by frequency or as the order coming from the
 `mounch.yaml` config file.
+
+Why not just use -dmenu rofi module you may ask ?
+
+I simply did not want to have to create .desktop for every apps I have and think a simple yaml is much simpler. I did not want to go thru every apps I have on my system I wanted a curated list and I wanted some title that differs from what's shipped on the .desktop from the system.  And I wanted to have static ordering as well as frequency based one, which fits my workflow.
 
 ## REQUIREMENTS
 
