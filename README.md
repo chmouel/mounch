@@ -1,4 +1,4 @@
-# mounch - a simple ROFI launcher 😋
+# MOUNCH - a simple ROFI launcher 😋
 
 ## Description
 
