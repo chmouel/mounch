@@ -75,5 +75,5 @@ see a most complete example [here](./mounch.yaml).
 
 ## Misc
 
-* **License**: Apache License
+* **License**: [Apache License](./license)
 * **Authors**: Chmouel Boudjnah <chmouel@chmouel.com>
