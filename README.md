@@ -1,26 +1,30 @@
 # mounch - a simple ROFI launcher 😋
 
-## DESCRIPTION
+## Description
 
 Mounch is a simple launcher using [ROFI](https://github.com/davatorium/rofi) backed by a yaml configuration file.
 
 You simply define a set of configuration blocks for some custom commands and it will show them with the awesome rofi. The items are sorted by frequency or as the order coming from the
 `mounch.yaml` config file.
 
-Why not just use -dmenu rofi module you may ask ?
+Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020-12-01-openshift-crio-userns.html#creating-a-user-namespaced-pod---attempt-4) rofi module you may ask ?
 
-I simply did not want to have to create .desktop for every apps I have and think a simple yaml is much simpler. I did not want to go thru every apps I have on my system I wanted a curated list and I wanted some title that differs from what's shipped on the .desktop from the system.  And I wanted to have static ordering as well as frequency based one, which fits my workflow.
+* I simply did not want to have to create a `.desktop` file for every apps I have, and find it much simpler to have everything in  a simple yaml definition. 
+* I did not want to have the launcher offering everythign I have on my system
+* I wanted a curated list 
+* I wanted some title that differs from what's shipped on the .desktop from the system.  
+* And I wanted to have static ordering as well as frequency based one, which is fitting my workflow.
 
-## REQUIREMENTS
+## Requirements
 
 * [rofi](https://github.com/davatorium/rofi) >= 1.6.0
 * [PyYaml ](https://pypi.org/project/PyYAML/)
 
-## SCREENSHOT
+## Screenshot
 
 ![screenshot](./.github/screenshot.png)
 
-## INSTALLATION
+## Installation
 
 1. Checkout this repository with git :
 
@@ -39,7 +43,7 @@ I simply did not want to have to create .desktop for every apps I have and think
 5. Install [pyyaml](https://pypi.org/project/PyYAML/) python library (which you
    probably have already), packages are called
 
-## CONFIGURATION
+## Configuration
 
 The basic defintion look like this : 
 
@@ -71,5 +75,5 @@ see a most complete example [here](./mounch.yaml).
 
 ## Misc
 
-* *License*: Apache License
-* *Authors*: Chmouel Boudjnah <chmouel@chmouel.com>
+* **License**: Apache License
+* **Authors**: Chmouel Boudjnah <chmouel@chmouel.com>
