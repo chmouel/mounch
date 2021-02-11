@@ -70,16 +70,20 @@ def main():
     if cache_file.exists():
         # Machine learning, big data at work!!!!!
         # Sort the application_config by frequency in the
-        # cache first. It will first do an collection ordering if the element is
+        # cache first. It will first do a collection ordering if the element is
         # not an empty string when stripped. Sort the cached_entries as list
-        # sorted by its frequency number, and then merge in order as it appears
-        # in the config (py3.7+) to the one who didn't appears with the other
+        # sorted by its frequency number and then merge in order as it appears
+        # in the config (py3.7+) to the one who didn't appear with the other
         # application_config dict.
-        cached_entries = {
-            x.split(" ")[0]: int(x.split(" ")[1])
-            for x in cache_file.read_text().split("\n")
-            if x.strip() and x in application_config
-        }
+        for entry in cache_file.read_text().split('\n'):
+            try:
+                id_, freq_str = entry.strip().split()
+                if id_ not in application_config:
+                    continue
+                cached_entries[id_] = int(freq_str)
+            except (IndexError, ValueError):
+                continue
+
         application_config = {
             **dict(
                 collections.OrderedDict([(el, application_config[el]) for el in dict(
@@ -129,21 +133,28 @@ def main():
     cache_file.write_text("\n".join(
         [f"{entry} {cached_entries[entry]}" for entry in cached_entries]))
 
-    binary = shutil.which(chosen['binary'])
-    if not binary:
-        binary = pathlib.Path(f"~/bin/desktop/{chosen['binary']}").expanduser()
-        if not binary.exists():
-            print(f"Cannot find {chosen['binary']}")
-            sys.exit(1)
+    binarypath = pathlib.Path(chosen['binary']).expanduser()
+    if binarypath.exists():
+       binary = binarypath
+    else:
+        binary = shutil.which(chosen['binary'])
+        if not binary:
+            binary = pathlib.Path(f"~/bin/desktop/{chosen['binary']}").expanduser()
+            if not binary.exists():
+                print(f"Cannot find {chosen['binary']}")
+                sys.exit(1)
 
-    args = chosen.get('args', " ")
+    args = chosen.get('args')
 
-    if isinstance(args, str):
-        args = [args]
-    os.execv(binary, [
-        binary,
-        *args,
-    ])
+    if args is None:
+        os.execv(binary, [binary])
+    else:
+        if isinstance(args, str):
+            args = [args]
+        os.execv(binary, [
+            binary,
+            *args,
+        ])
 
 
 if __name__ == '__main__':
