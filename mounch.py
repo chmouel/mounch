@@ -129,12 +129,16 @@ def main():
     cache_file.write_text("\n".join(
         [f"{entry} {cached_entries[entry]}" for entry in cached_entries]))
 
-    binary = shutil.which(chosen['binary'])
-    if not binary:
-        binary = pathlib.Path(f"~/bin/desktop/{chosen['binary']}").expanduser()
-        if not binary.exists():
-            print(f"Cannot find {chosen['binary']}")
-            sys.exit(1)
+    binarypath = pathlib.Path(chosen['binary']).expanduser()
+    if binarypath.exists():
+       binary = binarypath
+    else:
+        binary = shutil.which(chosen['binary'])
+        if not binary:
+            binary = pathlib.Path(f"~/bin/desktop/{chosen['binary']}").expanduser()
+            if not binary.exists():
+                print(f"Cannot find {chosen['binary']}")
+                sys.exit(1)
 
     args = chosen.get('args', " ")
 
