@@ -140,14 +140,17 @@ def main():
                 print(f"Cannot find {chosen['binary']}")
                 sys.exit(1)
 
-    args = chosen.get('args', " ")
+    args = chosen.get('args')
 
-    if isinstance(args, str):
-        args = [args]
-    os.execv(binary, [
-        binary,
-        *args,
-    ])
+    if args is None:
+        os.execv(binary, [binary])
+    else:
+        if isinstance(args, str):
+            args = [args]
+        os.execv(binary, [
+            binary,
+            *args,
+        ])
 
 
 if __name__ == '__main__':
