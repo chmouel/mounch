@@ -39,8 +39,8 @@
 #   icon: calc
 #
 #
-# Binary will be look in the path or in the ~/bin/desktop/bin/ make sure your
-# path is imported in your gnome session.
+# Binaries will be look in the path. Make sure your
+# path is imported in your session.
 # Icons will be looked up from your icon path theme or in
 # ~/.local/share/icons/{iconname}.png
 #
@@ -130,19 +130,14 @@ def main():
         cached_entries[chosen_id] = 0
     else:
         cached_entries[chosen_id] += 1
-    cache_file.write_text("\n".join(
-        [f"{entry} {cached_entries[entry]}" for entry in cached_entries]))
+    cache_file.write_text('\n'.join(
+        [f'{entry} {freq}' for entry, freq in cached_entries.items()]))
 
     binarypath = pathlib.Path(chosen['binary']).expanduser()
-    if binarypath.exists():
-        binary = binarypath
-    else:
-        binary = shutil.which(chosen['binary'])
-        if not binary:
-            binary = pathlib.Path(f"~/bin/desktop/{chosen['binary']}").expanduser()
-            if not binary.exists():
-                print(f"Cannot find {chosen['binary']}")
-                sys.exit(1)
+    binary = shutil.which(binarypath)
+    if not binary:
+        print(f"Cannot find executable \"{chosen['binary']}\"")
+        sys.exit(1)
 
     args = chosen.get('args')
 
