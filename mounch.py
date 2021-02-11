@@ -135,7 +135,7 @@ def main():
 
     binarypath = pathlib.Path(chosen['binary']).expanduser()
     if binarypath.exists():
-       binary = binarypath
+        binary = binarypath
     else:
         binary = shutil.which(chosen['binary'])
         if not binary:
