@@ -5,7 +5,7 @@ emacs:
   args: "emacs27"
   description: "Emacs"
   icon: emacs27
-  
+
 # This use kitty-ctrl this repository helpers/kitty-ctrl to ssh to server1 or
 # focus it if the tab is already open. It will set the custom title Precious.
 ssh-server:
@@ -14,56 +14,60 @@ ssh-server:
   description: "My Precious"
   icon: server
 
-# This will use kitty-ctrl to jump or launch into Bashtop (https://github.com/aristocratos/bashtop)
+# This will use kitty-ctrl to jump or launch into Bashtop
+# (https://github.com/aristocratos/bashtop)
 bashtop:
   binary: kitty-ctrl
   args: ["jump", "bashtop"]
   description: "BashTOP"
   icon: bashtop
-  
+
 # This will launch rofi calculator (builtin) module
 calculate:
   args: ["-modi", "calc:qalc +u8",
-          "-show", "calc", "-theme", "mounch", "-theme-str", '* { width: 640; height: 400;}']
+         "-show", "calc", "-theme", "mounch",
+         "-theme-str", '* { width: 640; height: 400;}']
   binary: rofi
   description: "Calculate"
   icon: calc
-  
-# This will launch the keyboard setting module from the gnome-control-center 
+
+# This will launch the keyboard setting module from the gnome-control-center
 keyboard-setting:
   args: keyboard
   binary: gnome-control-center
   description: "Keyboard setting"
   icon: keyboard
-  
-# This will use this helper from this repo helpers/xdo-focus-a-tab to go over the
-# chrome tab look for a title and focus it or launch it, it works well enough if
-# you don't have that many tabs since I use chrome only for the google stuff
-# that works okay for me.
+
+# This will use this helper from this repo helpers/xdo-focus-a-tab to go over
+# the chrome tab look for a title and focus it or launch it, it works well
+# enough if you don't have that many tabs since I use chrome only for the google
+# stuff that works okay for me.
 red-hat-meet:
   args: ["google-chrome", "Meet - ", "https://meet.google.com"]
   binary: xdo-focus-a-tab
   description: "Work Meet"
   icon: meet
-  
+
 # This will rofi ssh module.
 ssh:
-  args: ["-show", "ssh", "-theme",  "mounch"]
+  args: ["-show", "ssh", "-theme", "mounch"]
   binary: rofi
   description: "SSH"
   icon: ssh
-  
+
 # This will suspend your computer.
 suspend:
   args: suspend
   binary: systemctl
   description: "Suspend"
   icon: system-suspend-hibernate
-  
-# This will launch batzconverter (https://github.com/chmouel/batzconverter) in rofi
+
+# This will launch batzconverter (https://github.com/chmouel/batzconverter) in
+# rofi
 timezones:
-  args: ["-modi",  "batz:~/GIT/batz/share/rofibatz.sh",
-        "-show", "batz", "-theme", "mounch", "-theme-str", '* { width: 600; height: 550;}']
+  args: ["-modi", "batz:~/GIT/batz/share/rofibatz.sh",
+         "-show", "batz", "-theme", "mounch", "-theme-str",
+         '* { width: 600; height: 550;}']
   binary: rofi
   description: "Batz timezone converter"
   icon: batman
@@ -71,12 +75,13 @@ timezones:
 # This will generate password, this module is coming from this helper in this
 # repo helpers/rofibatgen.sh
 passgen:
-  args: ["-modi",  "batz:~/.config/rofi/rofipassgen.sh",
-        "-show", "batz", "-theme", "mounch", "-theme-str", '* { width: 600; height: 550;}']
+  args: ["-modi", "batz:~/.config/rofi/rofipassgen.sh",
+         "-show", "batz", "-theme", "mounch", "-theme-str",
+         "* { width: 600; height: 550;}"]
   binary: rofi
   description: "Password Generator"
   icon: password
-  
+
 # This will launch splatmoji to pickup emoji wiht rofi
 # https://github.com/cspeterson/splatmoji
 emoji-picker:
@@ -84,4 +89,3 @@ emoji-picker:
   binary: splatmoji
   description: "Emoji Picker"
   icon: emoji
-
