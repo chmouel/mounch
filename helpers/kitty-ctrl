@@ -14,7 +14,7 @@
 #    allow_remote_control yes
 #    listen_on unix:/tmp/mykitty
 #
-socket=$(find /tmp -maxdepth 1 -type s -name "mykitty-*" -print|head -1)
+socket=$(find /tmp -maxdepth 1 -type s -name "mykitty-*" -printf "%T@ %Tc %p\n" | sort -rn|sed -n 's/.* //;p;Q')
 export KITTY_LISTEN_ON=unix:${socket}
 
 if [[ -n $2 && $1 == "jump" ]];then
