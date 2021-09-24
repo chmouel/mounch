@@ -111,7 +111,7 @@ def main():
     ],
         stdout=subprocess.PIPE,
         stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stderr=subprocess.PIPE)
     stdout = popo.communicate(input=stringto)[0]
     output = stdout.decode().strip()
     if not output:
