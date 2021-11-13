@@ -38,19 +38,21 @@ listview {
 element {
   border: 0 0 1px 0;
   padding: 32px;
+    orientation: horizontal;
+  margin-left: 50px;
 }
 
 element selected {
-  background-color: #bd93f9;
+  background-color: #2e343f;
   color: black;
 }
 
 element-icon {
-    size:             32;
-    border:           0px;
+    size:             48;
+    cursor: inherit;
 }
 
-element-text {
-    horizontal-align: 0.020;
+element-text selected {
     vertical-align: 0.5;
+    background-color: #2e343f;
 }
