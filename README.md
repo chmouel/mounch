@@ -27,6 +27,18 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Installation
 
+## Arch AUR
+
+* Package available from here: 
+    
+    https://aur.archlinux.org/packages/mounch/
+    
+  example config file in /usr/share/doc/mounch and helpers in /usr/share/mounch/
+  
+  rofi theme is preinstalled in /usr/share/rofi/themes/
+
+## Manual
+
 1. Checkout this repository with git :
 
         mkdir ~/git/
