@@ -56,6 +56,15 @@ import sys
 
 import yaml
 
+ROFICMD = [
+    "rofi", "-dmenu", "-i", "-p", "🤓 Choose your mounchie:", "-show-icons",
+    "-no-custom", "-theme", "mounch"
+]
+
+WOFICMD = [
+    "wofi", "-d", "-G", "--alow-images", "-p", "Choose your mounchie 🤓: "
+]
+
 
 def main():
     cache_file = pathlib.Path("~/.cache/mounch/cache").expanduser()
@@ -87,12 +96,21 @@ def main():
         application_config = {
             **dict(
                 collections.OrderedDict([(el, application_config[el]) for el in dict(
-                    reversed(
-                        sorted(cached_entries.items(),
-                               key=lambda item: item[1]))).keys(
-                ) if el.strip()])),
+                                             reversed(
+                                                 sorted(cached_entries.items(),
+                                                        key=lambda item: item[1]))).keys(
+                                         ) if el.strip()])),
             **application_config
         }
+
+    cmd = ROFICMD
+    if os.environ.get("WAYLAND_DISPLAY"):
+        cmd = WOFICMD
+
+    if "launcher" in application_config:
+        cmd = [application_config["launcher"]["binary"]
+               ] + application_config["launcher"]["args"]
+        del application_config["launcher"]
 
     ret = []
     for app in application_config:
@@ -105,13 +123,10 @@ def main():
 
     stringto = "\n".join(ret).encode()
 
-    popo = subprocess.Popen([
-        "rofi", "-dmenu", "-i", "-p", "🤓 Choose your mounchie:", "-show-icons",
-        "-no-custom", "-theme", "mounch"
-    ],
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.PIPE)
+    popo = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            stdin=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     stdout = popo.communicate(input=stringto)[0]
     output = stdout.decode().strip()
     if not output:
