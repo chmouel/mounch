@@ -62,7 +62,7 @@ ROFICMD = [
 ]
 
 WOFICMD = [
-    "wofi", "-d", "-G", "--alow-images", "-p", "Choose your mounchie 🤓: "
+    "wofi", "-d", "-G", "--alow-images", "-i", "-p", "Choose your mounchie 🤓: "
 ]
 
 
