@@ -23,7 +23,7 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Screenshot
 
-![screenshot](./.github/screenshot.png)
+![image](https://user-images.githubusercontent.com/98980/142887783-7d793f9a-68c0-447e-a512-c23bbde410aa.png)
 
 ## Installation
 
@@ -84,6 +84,17 @@ files.
     `~/.local/share/icons/hicolor/scalable/apps/`
 
 see a most complete example [here](./mounch.yaml).
+
+## Wayland
+
+When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
+
+If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly : 
+
+```
+set $menu mounch -p
+bindsym $mod+d exec $menu|xargs swaymsg exec --
+```
 
 
 ## Misc
