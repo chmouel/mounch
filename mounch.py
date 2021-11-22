@@ -62,8 +62,41 @@ ROFICMD = [
 ]
 
 WOFICMD = [
-    "wofi", "-d", "-G", "--alow-images", "-i", "-p", "Choose your mounchie 🤓: "
+    "wofi", "-d", "-G", "--alow-images", "--allow-markup", "-i", "-p",
+    "Choose your mounchie 🤓: "
 ]
+
+
+# maybe we should just import gi to be able get from the theme and not care about all of this? 🤔
+# https://stackoverflow.com/a/65433574
+def get_icon_path(icon: str) -> str:
+    if os.path.exists(icon):
+        return icon
+    for path in [
+            os.path.expanduser("~/.local/share/icons/"),
+            os.path.expanduser("~/.local/share/icons/hicolor/scalable/apps"),
+            os.path.expanduser("~/.local/share/icons/hicolor/48x48/apps"),
+            os.path.expanduser("~/.local/share/icons/hicolor/64x64/apps"),
+            "/usr/share/icons", "/usr/share/pixmaps",
+            "/usr/share/icons/hicolor/scalable/apps",
+            "/usr/share/icons/hicolor/64x64/apps",
+            "/usr/share/icons/hicolor/48x48/apps",
+            "/usr/share/icons/Adwaita/scalable/apps",
+            "/usr/share/icons/Adwaita/64x64/apps",
+            "/usr/share/icons/Adwaita/48x48/apps"
+            "/usr/share/icons/Yaru/scalable/apps",
+            "/usr/share/icons/Yaru/64x64/apps",
+            "/usr/share/icons/Yaru/48x48/apps",
+            "/usr/share/icons/Humanity/apps/48",
+            "/usr/share/icons/Humanity/actions/48",
+            "/usr/share/icons/Humanity-Dark/apps/48"
+            "/usr/share/icons/Humanity-Dark/actions/48"
+    ]:
+        for icontype in ["svg", "png"]:
+            tpath = pathlib.Path(f"{path}/{icon}.{icontype}")
+            if tpath.exists():
+                return str(tpath)
+    return ""
 
 
 def main():
@@ -115,11 +148,15 @@ def main():
     ret = []
     for app in application_config:
         icon = application_config[app].get('icon', 'default')
-        iconpath = pathlib.Path(
-            f"~/.local/share/icons/{icon}.png").expanduser()
-        if iconpath.exists():
-            icon = iconpath
-        ret.append(f"{application_config[app]['description']}\0icon\x1f{icon}")
+        iconpath = get_icon_path(icon)
+        if os.environ.get('WAYLAND_DISPLAY'):
+            ret.append(
+                f"img:{iconpath}:text:{application_config[app]['description']}"
+            )
+        else:
+            ret.append(
+                f"{application_config[app]['description']}\0icon\x1f{iconpath}"
+            )
 
     stringto = "\n".join(ret).encode()
 
