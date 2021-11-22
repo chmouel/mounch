@@ -1,4 +1,4 @@
-# MOUNCH - a simple ROFI launcher 😋
+# MOUNCH - a simple WOFI/ROFI launcher 😋
 
 ## Description
 
@@ -23,7 +23,7 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Screenshot
 
-![image](https://user-images.githubusercontent.com/98980/142887783-7d793f9a-68c0-447e-a512-c23bbde410aa.png)
+![image](https://user-images.githubusercontent.com/98980/142888468-ce6a5f08-6c5d-496a-8b37-20f901c7ce3f.png)
 
 ## Installation
 
