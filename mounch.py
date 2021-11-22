@@ -46,7 +46,7 @@
 #
 # There is a cache of the application sorted in ~/.cache/mounch/cache, it is
 # used to sort the last one, so the last used appears at the top of the list.
-
+import argparse
 import collections
 import os
 import pathlib
@@ -99,7 +99,42 @@ def get_icon_path(icon: str) -> str:
     return ""
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description='Mounchie - A simple Wofi/Rofi launcher on yaml')
+    parser.add_argument('--use-rofi',
+                        "-r",
+                        dest='use_rofi',
+                        action='store_true',
+                        help="always use rofi")
+    parser.add_argument('--use-wofi',
+                        "-w",
+                        dest='use_wofi',
+                        action='store_true',
+                        help="always use wofi")
+    parser.add_argument(
+        '--print-only',
+        "-p",
+        dest='print_only',
+        action='store_true',
+        help=
+        "don't try to execute just print the command, usually would play nicely with \"swaymsg exec\""
+    )
+
+    return parser.parse_args()
+
+
 def main():
+    argp = parse_arguments()
+    if not argp.use_rofi and not argp.use_wofi:
+        if "WAYLAND_DISPLAY" in os.environ:
+            argp.use_wofi = True
+        else:
+            argp.use_rofi = True
+    if argp.use_rofi and argp.use_wofi:
+        print("we can't have both rofi and wofi")
+        sys.exit(1)
+
     cache_file = pathlib.Path("~/.cache/mounch/cache").expanduser()
     configfile = pathlib.Path("~/.config/mounch/mounch.yaml").expanduser()
     cached_entries = {}
@@ -137,7 +172,7 @@ def main():
         }
 
     cmd = ROFICMD
-    if os.environ.get("WAYLAND_DISPLAY"):
+    if argp.use_wofi:
         cmd = WOFICMD
 
     if "launcher" in application_config:
@@ -149,7 +184,7 @@ def main():
     for app in application_config:
         icon = application_config[app].get('icon', 'default')
         iconpath = get_icon_path(icon)
-        if os.environ.get('WAYLAND_DISPLAY'):
+        if argp.use_wofi:
             ret.append(
                 f"img:{iconpath}:text:{application_config[app]['description']}"
             )
@@ -168,6 +203,9 @@ def main():
     output = stdout.decode().strip()
     if not output:
         return
+
+    if argp.use_wofi:
+        output = output.split(":")[-1]
 
     chosen_id = [
         x for x in application_config
@@ -194,10 +232,17 @@ def main():
     args = chosen.get('args')
 
     if args is None:
+        if argp.print_only:
+            print(binary)
+            return
         os.execv(binary, [binary])
     else:
         if isinstance(args, str):
             args = [args]
+        if argp.print_only:
+            print(" ".join([binary, *args]))
+            return
+
         os.execv(binary, [
             binary,
             *args,
