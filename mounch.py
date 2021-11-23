@@ -184,7 +184,7 @@ def main():
     for app in application_config:
         icon = application_config[app].get('icon', 'default')
         iconpath = get_icon_path(icon)
-        if "if" in app:
+        if "if" in application_config[app]:
             if not eval(application_config[app]["if"]):
                 continue
         if argp.use_wofi:
