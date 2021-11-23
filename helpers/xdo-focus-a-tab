@@ -12,11 +12,11 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-# This goes over all your tab of a TOOL (i.e: chrome) and see for the title, if
+# This scriopt goes over all your tab of a TOOL (i.e: chrome) and see for the title, if
 # it can't find it it does a CTRL-TAB and follow thru. Originally from a
 # stackoverflow answer which i can't seem to find anymore.
 #
-# You need xdotool and wmctrl
+# You need xdotool and wmctrl and can only work on x11
 set -eux
 TOOL=${1}
 TITLE="${2}"

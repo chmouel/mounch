@@ -13,7 +13,9 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 * I did not want to have the launcher offering everythign I have on my system
 * I wanted a curated list
 * I wanted some title that differs from what's shipped on the .desktop from the system.
+* I switch often between desktop/wm (ie: gnome/sway) and display system (xorg/wayland) and I want entries depending of the current environement
 * And I wanted to have static ordering as well as frequency based one, which is fitting my workflow.
+
 
 ## Requirements
 
@@ -83,7 +85,7 @@ files.
 
     `~/.local/share/icons/hicolor/scalable/apps/`
 
-* you can add some condition too with the keyboard if, it must return a python
+* and if you like you can add some condition too with the `if` keyword, it must return a python
   boolean, ie:
 
 ```yaml
@@ -91,7 +93,7 @@ firefox:
   binary: gtk-launch
   args: spotify
   description: "Spotify"
-  icon: firefox
+  icon: spotify
   if: 'shutil.which("spotify")'
 ```
 
@@ -100,6 +102,8 @@ see a most complete example [here](./mounch.yaml).
 ## Wayland
 
 When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
+
+It works well with the [`dracula`](https://github.com/dracula/wofi) wofi theme (as seen on the screenshot)
 
 If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly :
 
