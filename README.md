@@ -1,4 +1,4 @@
-# MOUNCH - a simple ROFI launcher 😋
+# MOUNCH - a simple WOFI/ROFI launcher 😋
 
 ## Description
 
@@ -23,7 +23,7 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Screenshot
 
-![screenshot](./.github/screenshot.png)
+![image](https://user-images.githubusercontent.com/98980/142888468-ce6a5f08-6c5d-496a-8b37-20f901c7ce3f.png)
 
 ## Installation
 
@@ -96,6 +96,17 @@ firefox:
 ```
 
 see a most complete example [here](./mounch.yaml).
+
+## Wayland
+
+When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
+
+If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly : 
+
+```
+set $menu mounch -p
+bindsym $mod+d exec $menu|xargs swaymsg exec --
+```
 
 
 ## Misc
