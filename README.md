@@ -58,7 +58,7 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Configuration
 
-The basic defintion look like this :
+The basic definition look like this :
 
 ```yaml
 firefox:
@@ -101,12 +101,19 @@ see a most complete example [here](./mounch.yaml).
 
 When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
 
-If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly : 
+If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly :
 
 ```
 set $menu mounch -p
 bindsym $mod+d exec $menu|xargs swaymsg exec --
 ```
+
+
+## Internals
+
+We cache all entries in a simple file in $HOME/.cache/mounch/cache, it's simple and has only the id name and the number of times the entry has been launched.
+Before launch we sort that list and display the top hit at the top and the rest as configured in the mounch.yaml config file.
+After launch we increase the counter and rewrite the cache file.
 
 
 ## Misc
