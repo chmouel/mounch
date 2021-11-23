@@ -91,7 +91,7 @@ firefox:
   binary: gtk-launch
   args: spotify
   description: "Spotify"
-  icon: firefox
+  icon: spotify
   if: 'shutil.which("spotify")'
 ```
 
