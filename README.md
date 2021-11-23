@@ -29,12 +29,12 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 
 ## Arch AUR
 
-* Package available from here: 
-    
+* Package available from here:
+
     https://aur.archlinux.org/packages/mounch/
-    
+
   example config file in /usr/share/doc/mounch and helpers in /usr/share/mounch/
-  
+
   rofi theme is preinstalled in /usr/share/rofi/themes/
 
 ## Manual
@@ -82,6 +82,18 @@ files.
 * the icons is the standard freedesktop ones, add new ones in for example:
 
     `~/.local/share/icons/hicolor/scalable/apps/`
+
+* you can add some condition too with the keyboard if, it must return a python
+  boolean, ie:
+
+```yaml
+firefox:
+  binary: gtk-launch
+  args: spotify
+  description: "Spotify"
+  icon: firefox
+  if: 'shutil.which("spotify")'
+```
 
 see a most complete example [here](./mounch.yaml).
 

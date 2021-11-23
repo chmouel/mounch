@@ -2,9 +2,16 @@
 # already run or launch the app.
 emacs:
   binary: jumpapp
-  args: "emacs27"
+  args: "emacs"
   description: "Emacs"
-  icon: emacs27
+  icon: emacs
+  if: 'shutil.which("jumpapp")'
+
+wofi-menu:
+  binary: "wofi"
+  args: ['-d', '-G']
+  icon: wofi-menu
+  if: 'os.environ.get("XDG_CURRENT_DESKTOP", "") == "sway"'
 
 # This use kitty-ctrl this repository helpers/kitty-ctrl to ssh to server1 or
 # focus it if the tab is already open. It will set the custom title Precious.
