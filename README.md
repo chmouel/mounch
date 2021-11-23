@@ -101,6 +101,8 @@ see a most complete example [here](./mounch.yaml).
 
 When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
 
+It works well with the [`dracula`](https://github.com/dracula/wofi) wofi theme (as seen on the screenshot)
+
 If you run [sway](https://swaywm.org/) you may want to do this for your configuration so sway execute the command directly : 
 
 ```
