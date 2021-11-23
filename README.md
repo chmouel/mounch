@@ -14,6 +14,7 @@ Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020
 * I wanted a curated list
 * I wanted some title that differs from what's shipped on the .desktop from the system.
 * And I wanted to have static ordering as well as frequency based one, which is fitting my workflow.
+* I switch often between desktop/wm (ie: gnome/sway) and display system (xorg/wayland) and I want entries depending of the current environement
 
 ## Requirements
 
