@@ -84,7 +84,7 @@ files.
 
     `~/.local/share/icons/hicolor/scalable/apps/`
 
-* you can add some condition too with the keyboard if, it must return a python
+* and if you like you can add some condition too with the `if` keyword, it must return a python
   boolean, ie:
 
 ```yaml
