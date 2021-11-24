@@ -107,7 +107,7 @@ There is currently a bug with the stable version of wofi where the
 "--allow-images" flag doesn't get parsed. 
 
 The bug is fixed in the development branch of wofi and until then you will need
-to add this directive directly to your ~/.config/wofi/config : 
+to add this directive directly to your `~/.config/wofi/config` :
 
 ```
 allow_images=true
