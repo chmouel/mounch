@@ -104,13 +104,23 @@ see a most complete example [here](./mounch.yaml).
 When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
 
 There is currently a bug with the stable version of wofi where the
-"--allow-images" flag doesn't get parsed. 
+"--allow-images" flag doesn't get parsed.
 
 The bug is fixed in the development branch of wofi and until then you will need
 to add this directive directly to your `~/.config/wofi/config` :
 
 ```
 allow_images=true
+```
+
+There is multiples options you can configure to tweak wofi with its config, see [wofi(5)](https://man.archlinux.org/man/wofi.5.en), here is mine :
+
+```
+allow_images=true
+colors=colors
+filter_rate=100
+allow_markup=true
+lines=15
 ```
 
 It works well with the [`dracula`](https://github.com/dracula/wofi) wofi theme (as seen on the screenshot)
