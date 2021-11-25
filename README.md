@@ -1,4 +1,4 @@
-# MOUNCH - a simple WOFI/ROFI launcher 😋
+# MOUNCH - a simple WOFI/ROFI launcher
 
 ## Description
 
