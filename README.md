@@ -132,6 +132,11 @@ set $menu mounch -p
 bindsym $mod+d exec $menu|xargs swaymsg exec --
 ```
 
+If you run with Gnome on Wayland, you may want to make it to center new window automatically or mutter (the gnome wm) will show the windows randomly around the screen, which is quite annoying with a launcher like wofi, you just need to run this command to make it automatically centers them :
+
+```shell
+dconf write /org/gnome/mutter/center-new-windows true
+```
 
 ## Internals
 
