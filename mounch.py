@@ -72,7 +72,7 @@ WOFICMD = [
 def get_icon_path(icon: str) -> str:
     if os.path.exists(icon):
         return icon
-    # Should just use gob glob
+    # orders count!
     iconpath = [
         pathlib.Path("~/.local/share/icons/").expanduser(),
         pathlib.Path("/usr/share/icons")
@@ -134,7 +134,7 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    application_config = yaml.safe_load(configfile.open('r'))
+    application_config = yaml.safe_load(configfile.open('r', encoding="utf-8"))
 
     if cache_file.exists():
         # Machine learning, big data at work!!!!!
@@ -144,7 +144,7 @@ def main():
         # sorted by its frequency number and then merge in order as it appears
         # in the config (py3.7+) to the one who didn't appear with the other
         # application_config dict.
-        for entry in cache_file.read_text().split('\n'):
+        for entry in cache_file.read_text(encoding="utf-8").split('\n'):
             try:
                 id_, freq_str = entry.strip().split()
                 if id_ not in application_config:
