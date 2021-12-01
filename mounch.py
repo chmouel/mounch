@@ -72,26 +72,18 @@ WOFICMD = [
 def get_icon_path(icon: str) -> str:
     if os.path.exists(icon):
         return icon
-    for path in [
-            os.path.expanduser("~/.local/share/icons/"),
-            os.path.expanduser("~/.local/share/icons/hicolor/scalable/apps"),
-            os.path.expanduser("~/.local/share/icons/hicolor/48x48/apps"),
-            os.path.expanduser("~/.local/share/icons/hicolor/64x64/apps"),
-            "/usr/share/icons", "/usr/share/pixmaps",
-            "/usr/share/icons/hicolor/scalable/apps",
-            "/usr/share/icons/hicolor/64x64/apps",
-            "/usr/share/icons/hicolor/48x48/apps",
-            "/usr/share/icons/Adwaita/scalable/apps",
-            "/usr/share/icons/Adwaita/64x64/apps",
-            "/usr/share/icons/Adwaita/48x48/apps"
-            "/usr/share/icons/Yaru/scalable/apps",
-            "/usr/share/icons/Yaru/64x64/apps",
-            "/usr/share/icons/Yaru/48x48/apps",
-            "/usr/share/icons/Humanity/apps/48",
-            "/usr/share/icons/Humanity/actions/48",
-            "/usr/share/icons/Humanity-Dark/apps/48"
-            "/usr/share/icons/Humanity-Dark/actions/48"
-    ]:
+    # Should just use gob glob
+    iconpath = [
+        pathlib.Path("~/.local/share/icons/").expanduser(),
+        pathlib.Path("/usr/share/icons")
+    ]
+    for tp in iconpath:
+        iconpath += list(tp.glob("**/scalable/apps"))
+        iconpath += list(tp.glob("**/64x64/apps"))
+        iconpath += list(tp.glob("**/48x48/apps"))
+        iconpath += list(tp.glob("**/48"))
+
+    for path in iconpath:
         for icontype in ["svg", "png"]:
             tpath = pathlib.Path(f"{path}/{icon}.{icontype}")
             if tpath.exists():
