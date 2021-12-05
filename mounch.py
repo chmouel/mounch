@@ -46,6 +46,9 @@
 #
 # There is a cache of the application sorted in ~/.cache/mounch/cache, it is
 # used to sort the last one, so the last used appears at the top of the list.
+#
+# Support for condtional si with an embedded if:
+
 import argparse
 import collections
 import os
