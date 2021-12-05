@@ -62,8 +62,8 @@ ROFICMD = [
 ]
 
 WOFICMD = [
-    "wofi", "-d", "-G", "--alow-images", "--allow-markup", "-i", "-p", "-W",
-    "-L", "15", "Choose your mounchie 🤓: "
+    "wofi", "-d", "-G", "-I", "--alow-images", "--allow-markup", "-W", "500", "-H", "500",
+"-i", "-p",     "Choose your mounchie 🤓: "
 ]
 
 
@@ -72,18 +72,26 @@ WOFICMD = [
 def get_icon_path(icon: str) -> str:
     if os.path.exists(icon):
         return icon
-    # orders count!
-    iconpath = [
-        pathlib.Path("~/.local/share/icons/").expanduser(),
-        pathlib.Path("/usr/share/icons")
-    ]
-    for tp in iconpath:
-        iconpath += list(tp.glob("**/scalable/apps"))
-        iconpath += list(tp.glob("**/64x64/apps"))
-        iconpath += list(tp.glob("**/48x48/apps"))
-        iconpath += list(tp.glob("**/48"))
-
-    for path in iconpath:
+    for path in [
+            os.path.expanduser("~/.local/share/icons/"),
+            os.path.expanduser("~/.local/share/icons/hicolor/scalable/apps"),
+            os.path.expanduser("~/.local/share/icons/hicolor/48x48/apps"),
+            os.path.expanduser("~/.local/share/icons/hicolor/64x64/apps"),
+            "/usr/share/icons", "/usr/share/pixmaps",
+            "/usr/share/icons/hicolor/scalable/apps",
+            "/usr/share/icons/hicolor/64x64/apps",
+            "/usr/share/icons/hicolor/48x48/apps",
+            "/usr/share/icons/Adwaita/scalable/apps",
+            "/usr/share/icons/Adwaita/64x64/apps",
+            "/usr/share/icons/Adwaita/48x48/apps"
+            "/usr/share/icons/Yaru/scalable/apps",
+            "/usr/share/icons/Yaru/64x64/apps",
+            "/usr/share/icons/Yaru/48x48/apps",
+            "/usr/share/icons/Humanity/apps/48",
+            "/usr/share/icons/Humanity/actions/48",
+            "/usr/share/icons/Humanity-Dark/apps/48"
+            "/usr/share/icons/Humanity-Dark/actions/48"
+    ]:
         for icontype in ["svg", "png"]:
             tpath = pathlib.Path(f"{path}/{icon}.{icontype}")
             if tpath.exists():
@@ -134,7 +142,7 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    application_config = yaml.safe_load(configfile.open('r', encoding="utf-8"))
+    application_config = yaml.safe_load(configfile.open('r'))
 
     if cache_file.exists():
         # Machine learning, big data at work!!!!!
@@ -144,7 +152,7 @@ def main():
         # sorted by its frequency number and then merge in order as it appears
         # in the config (py3.7+) to the one who didn't appear with the other
         # application_config dict.
-        for entry in cache_file.read_text(encoding="utf-8").split('\n'):
+        for entry in cache_file.read_text().split('\n'):
             try:
                 id_, freq_str = entry.strip().split()
                 if id_ not in application_config:
