@@ -56,14 +56,23 @@ import sys
 
 import yaml
 
-ROFICMD = [
-    "rofi", "-dmenu", "-i", "-p", "🤓 Choose your mounchie:", "-show-icons",
-    "-no-custom", "-theme", "mounch"
-]
+DEFAULT_ARGS = ["-dmenu", "-p", "🤓 Choose your mounchie:"]
 
-WOFICMD = [
-    "wofi", "-d", "-G", "-I", "--alow-images", "--allow-markup", "-W", "500", "-H", "500",
-"-i", "-p",     "Choose your mounchie 🤓: "
+ROFI_CMD = "rofi"
+ROFI_ARGS = ["-i", "-p", "-show-icons", "-no-custom", "-theme", "mounch"]
+
+WOFI_CMD = "wofi"
+WOFI_ARGS = [
+    "-d",
+    "-G",
+    "-I",
+    "--alow-images",
+    "--allow-markup",
+    "-W",
+    "500",
+    "-H",
+    "500",
+    "-i",
 ]
 
 
@@ -102,6 +111,13 @@ def get_icon_path(icon: str) -> str:
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Mounchie - A simple Wofi/Rofi launcher on yaml')
+    parser.add_argument(
+        '--no-defaults',
+        "-N",
+        action='store_true',
+        help=
+        "No default arguments for launcher, let you configure it via the launcher config file"
+    )
     parser.add_argument('--use-rofi',
                         "-r",
                         dest='use_rofi',
@@ -171,9 +187,9 @@ def main():
             **application_config
         }
 
-    cmd = ROFICMD
+    cmd = get_command(ROFI_CMD, ROFI_ARGS, argp.no_defaults)
     if argp.use_wofi:
-        cmd = WOFICMD
+        cmd = get_command(WOFI_CMD, WOFI_ARGS, argp.no_defaults)
 
     if "launcher" in application_config:
         cmd = [application_config["launcher"]["binary"]
@@ -250,6 +266,13 @@ def main():
             binary,
             *args,
         ])
+
+
+def get_command(cmd: str, args: list, no_defaults: bool) -> list:
+    ret = [cmd] + DEFAULT_ARGS
+    if not no_defaults:
+        ret += args
+    return ret
 
 
 if __name__ == '__main__':

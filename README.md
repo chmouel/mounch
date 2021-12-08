@@ -99,6 +99,10 @@ firefox:
 
 see a most complete example [here](./mounch.yaml).
 
+By default `mounch` add some sane arguments to `rofi` or `wofi` if you don't
+want them and want to let the launcher config files set the options then use the
+`-N/--no-defaults` option.
+
 ## Wayland
 
 When detecting wayland it will try to use [wofi](https://hg.sr.ht/~scoopta/wofi) instead of rofi, you can specify --use-rofi to force use rofi.
