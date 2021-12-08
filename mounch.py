@@ -158,7 +158,7 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    application_config = yaml.safe_load(configfile.open('r'))
+    application_config = yaml.safe_load(configfile.open('r', encoding="utf-8"))
 
     if cache_file.exists():
         # Machine learning, big data at work!!!!!
@@ -168,7 +168,7 @@ def main():
         # sorted by its frequency number and then merge in order as it appears
         # in the config (py3.7+) to the one who didn't appear with the other
         # application_config dict.
-        for entry in cache_file.read_text().split('\n'):
+        for entry in cache_file.read_text(encoding="utf-8").split('\n'):
             try:
                 id_, freq_str = entry.strip().split()
                 if id_ not in application_config:
@@ -201,6 +201,7 @@ def main():
         icon = application_config[app].get('icon', 'default')
         iconpath = get_icon_path(icon)
         if "if" in application_config[app]:
+            # pylint: disable=eval-used
             if not eval(application_config[app]["if"]):
                 continue
         if argp.use_wofi:
@@ -212,19 +213,18 @@ def main():
                 f"{application_config[app]['description']}\0icon\x1f{iconpath}"
             )
 
-    stringto = "\n".join(ret).encode()
-
-    popo = subprocess.Popen(cmd,
-                            stdout=subprocess.PIPE,
-                            stdin=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    stdout = popo.communicate(input=stringto)[0]
-    output = stdout.decode().strip()
-    if not output:
-        return
+    with subprocess.Popen(cmd,
+                          stdout=subprocess.PIPE,
+                          stdin=subprocess.PIPE,
+                          stderr=subprocess.PIPE) as popo:
+        stringto = "\n".join(ret).encode()
+        stdout = popo.communicate(input=stringto)[0]
+        output = stdout.decode().strip()
+        if not output:
+            return
 
     if argp.use_wofi:
-        output = output.split(":")[-1]
+        output = output.rsplit(":", maxsplit=1)[-1]
 
     chosen_id = [
         x for x in application_config
@@ -240,7 +240,8 @@ def main():
     else:
         cached_entries[chosen_id] += 1
     cache_file.write_text('\n'.join(
-        [f'{entry} {freq}' for entry, freq in cached_entries.items()]))
+        [f'{entry} {freq}' for entry, freq in cached_entries.items()]),
+                          encoding="utf-8")
 
     binarypath = pathlib.Path(chosen['binary']).expanduser()
     binary = shutil.which(binarypath)
