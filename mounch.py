@@ -59,7 +59,8 @@ import yaml
 DEFAULT_ARGS = ["-dmenu", "-p", "🤓 Choose your mounchie:"]
 
 ROFI_CMD = "rofi"
-ROFI_ARGS = ["-i", "-p", "-show-icons", "-no-custom", "-theme", "mounch"]
+ROFI_THEME = "mounch"
+ROFI_ARGS = ["-i", "-p", "-show-icons", "-no-custom", "-theme", ROFI_THEME]
 
 WOFI_CMD = "wofi"
 WOFI_ARGS = [
@@ -108,6 +109,21 @@ def get_icon_path(icon: str) -> str:
     return ""
 
 
+
+def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
+    ret = [cmd] + DEFAULT_ARGS
+    if not argp.no_defaults:
+        if cmd == "rofi" and argp.rofi_theme:
+            modified = []
+            for x in args:
+                if x == ROFI_THEME:
+                    modified.append(argp.rofi_theme)
+                else:
+                    modified.append(x)
+            args = modified
+        ret += args
+    return ret
+
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Mounchie - A simple Wofi/Rofi launcher on yaml')
@@ -118,6 +134,9 @@ def parse_arguments():
         help=
         "No default arguments for launcher, let you configure it via the launcher config file"
     )
+    parser.add_argument('--rofi-theme',
+                        help="rofi theme to use")
+
     parser.add_argument('--use-rofi',
                         "-r",
                         dest='use_rofi',
@@ -187,9 +206,9 @@ def main():
             **application_config
         }
 
-    cmd = get_command(ROFI_CMD, ROFI_ARGS, argp.no_defaults)
+    cmd = get_command(ROFI_CMD, ROFI_ARGS, argp)
     if argp.use_wofi:
-        cmd = get_command(WOFI_CMD, WOFI_ARGS, argp.no_defaults)
+        cmd = get_command(WOFI_CMD, WOFI_ARGS, argp)
 
     if "launcher" in application_config:
         cmd = [application_config["launcher"]["binary"]
@@ -267,13 +286,6 @@ def main():
             binary,
             *args,
         ])
-
-
-def get_command(cmd: str, args: list, no_defaults: bool) -> list:
-    ret = [cmd] + DEFAULT_ARGS
-    if not no_defaults:
-        ret += args
-    return ret
 
 
 if __name__ == '__main__':
