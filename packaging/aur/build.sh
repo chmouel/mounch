@@ -25,7 +25,7 @@ while getopts "n" o; do
 done
 shift $((OPTIND-1))
 
-sudo docker build -f ./hack/aur/Dockerfile -t ${image_name} .
+sudo docker build -f ./packaging/aur/Dockerfile -t ${image_name} .
 
 sudo docker run --rm \
            -v "${gitdir}":/src \
