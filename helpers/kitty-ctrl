@@ -14,16 +14,26 @@
 #    allow_remote_control yes
 #    listen_on unix:/tmp/mykitty
 #
+set -eu
 socket=$(find /tmp -maxdepth 1 -type s -name "mykitty-*" -printf "%T@ %Tc %p\n" | sort -rn|sed -n 's/.* //;p;Q')
+verbose=
+title=
 export KITTY_LISTEN_ON=unix:${socket}
+
+TMP=$(mktemp /tmp/.mm.XXXXXX)
+clean() { rm -f ${TMP}; }
+trap clean EXIT
 
 if [[ -n $2 && $1 == "jump" ]];then
     shift
-    while getopts "t:" arg; do
+    while getopts "vt:" arg; do
         case $arg in
+            v)
+                verbose=yes;
+                set -x
+                ;;
             t)
                 title=$OPTARG
-                echo $strength
                 ;;
             *)
                 echo "unkown option: ${OPTARG}";
@@ -42,7 +52,11 @@ if [[ -n $2 && $1 == "jump" ]];then
     
     kitty @ focus-window --match title:"$title" 2>/dev/null || {
         kitty @ launch --type=tab --tab-title "${title}" --title "${title}" ${args} &&
-            kitty @ focus-window --match title:"${title}"
+            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1  ||
+            [[ -n ${verbose} ]] && cat ${TMP}
+            exec /usr/bin/kitty "${args}" &
+            disown
+            exit 0
     }
     exit
 fi
