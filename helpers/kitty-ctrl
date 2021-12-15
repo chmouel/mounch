@@ -24,7 +24,7 @@ TMP=$(mktemp /tmp/.mm.XXXXXX)
 clean() { rm -f ${TMP}; }
 trap clean EXIT
 
-if [[ -n $2 && $1 == "jump" ]];then
+if [[ -n ${2:-""} && $1 == "jump" ]];then
     shift
     while getopts "vt:" arg; do
         case $arg in
@@ -44,21 +44,20 @@ if [[ -n $2 && $1 == "jump" ]];then
     shift $((OPTIND-1))
 
     [[ -z ${title} ]] && title=${1^}
-    args=$@
-    if [[ -z ${socket} ]];then
+    args=$*
+    if ! pgrep kitty || [[ -z ${socket} ]];then
         exec /usr/bin/kitty "${args}" &
         exit 0
     fi
-    
+       
     kitty @ focus-window --match title:"$title" 2>/dev/null || {
         kitty @ launch --type=tab --tab-title "${title}" --title "${title}" ${args} &&
-            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1  ||
-            [[ -n ${verbose} ]] && cat ${TMP}
-            exec /usr/bin/kitty "${args}" &
-            disown
-            exit 0
+            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1  
     }
     exit
+elif ! pgrep kitty;then 
+    exec /usr/bin/kitty "$@" &
+    exit 0
 fi
 
 [[ -z ${socket} ]] && exit 1
