@@ -245,11 +245,16 @@ def main():
     if argp.use_wofi:
         output = output.rsplit(":", maxsplit=1)[-1]
 
-    chosen_id = [
-        x for x in application_config
-        if application_config[x]['description'] == output
-    ][0]
-    chosen = application_config[chosen_id]
+    chosen = None
+    chosen_id = 0
+    for x in application_config:
+        if 'description' in application_config[x] and \
+                application_config[x]['description'] == output:
+                    chosen_id=x
+                    chosen=application_config[chosen_id]
+                    break
+    if not chosen:
+        raise Exception("Could not match the chosen one")
 
     if not cache_file.parent.exists():
         cache_file.parent.mkdir(0o755)
