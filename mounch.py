@@ -56,11 +56,11 @@ import sys
 
 import yaml
 
-DEFAULT_ARGS = ["-dmenu", "-p", "🤓 Choose your mounchie:"]
+DEFAULT_ARGS = ["-p", "🤓 Choose your mounchie:"]
 
 ROFI_CMD = "rofi"
 ROFI_THEME = "mounch"
-ROFI_ARGS = ["-i", "-p", "-show-icons", "-no-custom", "-theme", ROFI_THEME]
+ROFI_ARGS = ["-dmenu", "-i", "-p", "-show-icons", "-no-custom", "-theme", ROFI_THEME]
 
 WOFI_CMD = "wofi"
 WOFI_ARGS = [
