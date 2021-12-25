@@ -2,6 +2,8 @@
 set -euf
 current=$(git describe --tags $(git rev-list --tags --max-count=1))
 VERSION=${1-""}
+PKGNAME=$(basename $(git remote get-url origin))
+
 [[ -z ${VERSION} ]] && { 
    echo "Current version is ${current}"
    read -p "Would you like to bump [M]ajor, Mi[n]or or [P]atch: " ANSWER
@@ -26,5 +28,6 @@ set -x
 
 git tag -s ${VERSION} -m "Releasing version ${VERSION}"
 git push --tags origin ${VERSION}
+gh release create ${VERSION} --notes "Release ${VERSION} 🥳" --generate-notes
 
 ./packaging/aur/build.sh ${VERSION}
