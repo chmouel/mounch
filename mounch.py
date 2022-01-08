@@ -156,7 +156,32 @@ def parse_arguments():
         "don't try to execute just print the command, usually would play nicely with \"swaymsg exec\""
     )
 
+    parser.add_argument('--generate-desktop-entries',
+                        metavar='DIR',
+                        help="generate desktop entries to directories")
     return parser.parse_args()
+
+
+def generate_desktop_entries(directory: str, config: dict):
+    directory = pathlib.Path(directory).expanduser()
+    if not directory.exists():
+        print(f"{directory} does not exists")
+        sys.exit(1)
+    for k, v in config.items():
+        if 'nogenerate' in v:
+            continue
+        arg = v['binary']
+        if 'args' in v:
+            arg += f" {' '.join(v['args'])}"
+        entry = f"""[Desktop Entry]
+Type=Application
+Name={v['description']}
+Icon={v['icon']}
+Exec={arg}
+Terminal=false
+"""
+        path = directory / f"{k}.desktop"
+        path.write_text(entry)
 
 
 def main():
@@ -178,6 +203,10 @@ def main():
         print("I could not find config file: ", configfile)
         sys.exit(1)
     application_config = yaml.safe_load(configfile.open('r', encoding="utf-8"))
+    if argp.generate_desktop_entries:
+        generate_desktop_entries(argp.generate_desktop_entries,
+                                 application_config)
+        sys.exit(0)
 
     if cache_file.exists():
         # Machine learning, big data at work!!!!!
