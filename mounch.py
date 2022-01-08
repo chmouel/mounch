@@ -48,6 +48,7 @@
 # used to sort the last one, so the last used appears at the top of the list.
 import argparse
 import collections
+import glob
 import os
 import pathlib
 import shutil
@@ -77,37 +78,36 @@ WOFI_ARGS = [
 ]
 
 
-# maybe we should just import gi to be able get from the theme and not care about all of this? 🤔
-# https://stackoverflow.com/a/65433574
+# maybe we should just import gi to be able get from the theme and not care
+# about all of this? 🤔 https://stackoverflow.com/a/65433574
+# we really should cache this
 def get_icon_path(icon: str) -> str:
     if os.path.exists(icon):
         return icon
-    for path in [
-            os.path.expanduser("~/.local/share/icons/"),
-            os.path.expanduser("~/.local/share/icons/hicolor/scalable/apps"),
-            os.path.expanduser("~/.local/share/icons/hicolor/48x48/apps"),
-            os.path.expanduser("~/.local/share/icons/hicolor/64x64/apps"),
-            "/usr/share/icons", "/usr/share/pixmaps",
-            "/usr/share/icons/hicolor/scalable/apps",
-            "/usr/share/icons/hicolor/64x64/apps",
-            "/usr/share/icons/hicolor/48x48/apps",
-            "/usr/share/icons/Adwaita/scalable/apps",
-            "/usr/share/icons/Adwaita/64x64/apps",
-            "/usr/share/icons/Adwaita/48x48/apps"
-            "/usr/share/icons/Yaru/scalable/apps",
-            "/usr/share/icons/Yaru/64x64/apps",
-            "/usr/share/icons/Yaru/48x48/apps",
-            "/usr/share/icons/Humanity/apps/48",
-            "/usr/share/icons/Humanity/actions/48",
-            "/usr/share/icons/Humanity-Dark/apps/48"
-            "/usr/share/icons/Humanity-Dark/actions/48"
-    ]:
+
+    def gpath(bpath: str, wildcards: str) -> str:
+        return [
+            pathlib.Path(x)
+            for x in glob.glob(f"{os.path.expanduser(bpath)}/{wildcards}")
+        ]
+
+    paths = [
+        pathlib.Path("~/.local/share/icons/").expanduser(),
+        pathlib.Path("/usr/share/icons"),
+        pathlib.Path("/usr/share/pixmaps"),
+    ]
+    paths += gpath("/usr/share/icons", "/*/64x64/*")
+    paths += gpath("/usr/share/icons", "/*/48x48/*")
+    paths += gpath("/usr/share/icons", "/*/apps/48")
+    paths += gpath("/usr/share/icons", "/*/apps/64")
+    paths += gpath("~/.local/share/icons", "/*/*/*")
+
+    for path in paths:
         for icontype in ["svg", "png"]:
             tpath = pathlib.Path(f"{path}/{icon}.{icontype}")
             if tpath.exists():
                 return str(tpath)
     return ""
-
 
 
 def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
@@ -124,6 +124,7 @@ def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
         ret += args
     return ret
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Mounchie - A simple Wofi/Rofi launcher on yaml')
@@ -134,8 +135,7 @@ def parse_arguments():
         help=
         "No default arguments for launcher, let you configure it via the launcher config file"
     )
-    parser.add_argument('--rofi-theme',
-                        help="rofi theme to use")
+    parser.add_argument('--rofi-theme', help="rofi theme to use")
 
     parser.add_argument('--use-rofi',
                         "-r",
