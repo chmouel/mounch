@@ -57,11 +57,11 @@ import sys
 
 import yaml
 
-DEFAULT_ARGS = ["-dmenu", "-p", "🤓 Choose your mounchie:"]
+DEFAULT_ARGS = ["-p", "🤓 Choose your mounchie:"]
 
 ROFI_CMD = "rofi"
 ROFI_THEME = "mounch"
-ROFI_ARGS = ["-i", "-p", "-show-icons", "-no-custom", "-theme", ROFI_THEME]
+ROFI_ARGS = ["-dmenu", "-i", "-p", "-show-icons", "-no-custom", "-theme", ROFI_THEME]
 
 WOFI_CMD = "wofi"
 WOFI_ARGS = [
@@ -274,11 +274,16 @@ def main():
     if argp.use_wofi:
         output = output.rsplit(":", maxsplit=1)[-1]
 
-    chosen_id = [
-        x for x in application_config
-        if application_config[x]['description'] == output
-    ][0]
-    chosen = application_config[chosen_id]
+    chosen = None
+    chosen_id = 0
+    for x in application_config:
+        if 'description' in application_config[x] and \
+                application_config[x]['description'] == output:
+                    chosen_id=x
+                    chosen=application_config[chosen_id]
+                    break
+    if not chosen:
+        raise Exception("Could not match the chosen one")
 
     if not cache_file.parent.exists():
         cache_file.parent.mkdir(0o755)
