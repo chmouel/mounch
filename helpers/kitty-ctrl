@@ -9,7 +9,7 @@
 #
 # It will go over the tabs with TITLE see if it's there and then focus or launch
 # a tab with the binary  name Binary and set the tab tile as TITLE to it.
-# 
+#
 # you will need this configuration in your kitty.conf :
 #    allow_remote_control yes
 #    listen_on unix:/tmp/mykitty
@@ -40,22 +40,22 @@ if [[ -n ${2:-""} && $1 == "jump" ]];then
                 exit 1
                 ;;
         esac
-    done    
+    done
     shift $((OPTIND-1))
 
     [[ -z ${title} ]] && title=${1^}
     args=$*
-    if ! pgrep kitty || [[ -z ${socket} ]];then
+    if ! pgrep kitty >/dev/null || [[ -z ${socket} ]];then
         exec /usr/bin/kitty "${args}" &
         exit 0
     fi
-       
+
     kitty @ focus-window --match title:"$title" 2>/dev/null || {
         kitty @ launch --type=tab --tab-title "${title}" --title "${title}" ${args} &&
-            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1  
+            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1
     }
     exit
-elif ! pgrep kitty;then 
+elif ! pgrep kitty >/dev/null;then
     exec /usr/bin/kitty "$@" &
     exit 0
 fi
