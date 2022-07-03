@@ -57,7 +57,7 @@ import sys
 
 import yaml
 
-DEFAULT_ARGS = ["-p", "🤓 Choose your mounchie:"]
+PROMPT_ARG = "-p"
 
 ROFI_CMD = "rofi"
 ROFI_THEME = "mounch"
@@ -111,7 +111,7 @@ def get_icon_path(icon: str) -> str:
 
 
 def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
-    ret = [cmd] + DEFAULT_ARGS
+    ret = [cmd] + [PROMPT_ARG] + [argp.prompt]
     if not argp.no_defaults:
         if cmd == "rofi" and argp.rofi_theme:
             modified = []
@@ -159,6 +159,10 @@ def parse_arguments():
     parser.add_argument('--generate-desktop-entries',
                         metavar='DIR',
                         help="generate desktop entries to directories")
+
+    parser.add_argument('--prompt',
+                        default="🤓 Choose your mounchie:",
+                        help="custom prompt to show")
     return parser.parse_args()
 
 
