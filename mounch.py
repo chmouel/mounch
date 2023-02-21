@@ -78,13 +78,7 @@ WOFI_ARGS = [
 ]
 
 
-# maybe we should just import gi to be able get from the theme and not care
-# about all of this? 🤔 https://stackoverflow.com/a/65433574
-# we really should cache this
-def get_icon_path(icon: str) -> str:
-    if os.path.exists(icon):
-        return icon
-
+def cache_iconpath():
     def gpath(bpath: str, wildcards: str) -> str:
         return [
             pathlib.Path(x)
@@ -101,13 +95,14 @@ def get_icon_path(icon: str) -> str:
     paths += gpath("/usr/share/icons", "/*/apps/48")
     paths += gpath("/usr/share/icons", "/*/apps/64")
     paths += gpath("~/.local/share/icons", "/*/*/*")
-
+    ret = {}
     for path in paths:
-        for icontype in ["svg", "png"]:
-            tpath = pathlib.Path(f"{path}/{icon}.{icontype}")
-            if tpath.exists():
-                return str(tpath)
-    return ""
+        for f in path.iterdir():
+            if f.suffix in (".png", "jpg"):
+                fname = str(f.name).replace(f.suffix, "")
+                if fname not in ret:
+                    ret[fname] = str(f.absolute())
+    return ret
 
 
 def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
@@ -127,55 +122,52 @@ def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description='Mounchie - A simple Wofi/Rofi launcher on yaml')
+        description="Mounchie - A simple Wofi/Rofi launcher on yaml"
+    )
     parser.add_argument(
-        '--no-defaults',
+        "--no-defaults",
         "-N",
-        action='store_true',
-        help=
-        "No default arguments for launcher, let you configure it via the launcher config file"
+        action="store_true",
+        help="No default arguments for launcher, let you configure it via the launcher config file",
     )
-    parser.add_argument('--rofi-theme', help="rofi theme to use")
+    parser.add_argument("--rofi-theme", help="rofi theme to use")
 
-    parser.add_argument('--use-rofi',
-                        "-r",
-                        dest='use_rofi',
-                        action='store_true',
-                        help="always use rofi")
-    parser.add_argument('--use-wofi',
-                        "-w",
-                        dest='use_wofi',
-                        action='store_true',
-                        help="always use wofi")
     parser.add_argument(
-        '--print-only',
+        "--use-rofi", "-r", dest="use_rofi", action="store_true", help="always use rofi"
+    )
+    parser.add_argument(
+        "--use-wofi", "-w", dest="use_wofi", action="store_true", help="always use wofi"
+    )
+    parser.add_argument(
+        "--print-only",
         "-p",
-        dest='print_only',
-        action='store_true',
-        help=
-        "don't try to execute just print the command, usually would play nicely with \"swaymsg exec\""
+        dest="print_only",
+        action="store_true",
+        help='don\'t try to execute just print the command, usually would play nicely with "swaymsg exec"',
     )
 
-    parser.add_argument('--generate-desktop-entries',
-                        metavar='DIR',
-                        help="generate desktop entries to directories")
+    parser.add_argument(
+        "--generate-desktop-entries",
+        metavar="DIR",
+        help="generate desktop entries to directories",
+    )
 
-    parser.add_argument('--prompt',
-                        default="🤓 Choose your mounchie:",
-                        help="custom prompt to show")
+    parser.add_argument(
+        "--prompt", default="🤓 Choose your mounchie:", help="custom prompt to show"
+    )
     return parser.parse_args()
 
 
 def generate_desktop_entries(directory: str, config: dict):
-    directory = pathlib.Path(directory).expanduser()
-    if not directory.exists():
-        print(f"{directory} does not exists")
+    dexpanded: pathlib.Path = pathlib.Path(directory).expanduser()
+    if not dexpanded.exists():
+        print(f"{dexpanded} does not exists")
         sys.exit(1)
     for k, v in config.items():
-        if 'nogenerate' in v:
+        if "nogenerate" in v:
             continue
-        arg = v['binary']
-        if 'args' in v:
+        arg = v["binary"]
+        if "args" in v:
             arg += f" {' '.join(v['args'])}"
         entry = f"""[Desktop Entry]
 Type=Application
@@ -184,7 +176,7 @@ Icon={v['icon']}
 Exec={arg}
 Terminal=false
 """
-        path = directory / f"{k}.desktop"
+        path = dexpanded / f"{k}.desktop"
         path.write_text(entry)
 
 
@@ -206,10 +198,9 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    application_config = yaml.safe_load(configfile.open('r', encoding="utf-8"))
+    application_config = yaml.safe_load(configfile.open("r", encoding="utf-8"))
     if argp.generate_desktop_entries:
-        generate_desktop_entries(argp.generate_desktop_entries,
-                                 application_config)
+        generate_desktop_entries(argp.generate_desktop_entries, application_config)
         sys.exit(0)
 
     if cache_file.exists():
@@ -220,7 +211,7 @@ def main():
         # sorted by its frequency number and then merge in order as it appears
         # in the config (py3.7+) to the one who didn't appear with the other
         # application_config dict.
-        for entry in cache_file.read_text(encoding="utf-8").split('\n'):
+        for entry in cache_file.read_text(encoding="utf-8").split("\n"):
             try:
                 id_, freq_str = entry.strip().split()
                 if id_ not in application_config:
@@ -231,12 +222,19 @@ def main():
 
         application_config = {
             **dict(
-                collections.OrderedDict([(el, application_config[el]) for el in dict(
-                                             reversed(
-                                                 sorted(cached_entries.items(),
-                                                        key=lambda item: item[1]))).keys(
-                                         ) if el.strip()])),
-            **application_config
+                collections.OrderedDict(
+                    [
+                        (el, application_config[el])
+                        for el in dict(
+                            reversed(
+                                sorted(cached_entries.items(), key=lambda item: item[1])
+                            )
+                        ).keys()
+                        if el.strip()
+                    ]
+                )
+            ),
+            **application_config,
         }
 
     cmd = get_command(ROFI_CMD, ROFI_ARGS, argp)
@@ -244,31 +242,28 @@ def main():
         cmd = get_command(WOFI_CMD, WOFI_ARGS, argp)
 
     if "launcher" in application_config:
-        cmd = [application_config["launcher"]["binary"]
-               ] + application_config["launcher"]["args"]
+        cmd = [application_config["launcher"]["binary"]] + application_config[
+            "launcher"
+        ]["args"]
         del application_config["launcher"]
 
     ret = []
+    iconcache = cache_iconpath()
     for app in application_config:
-        icon = application_config[app].get('icon', 'default')
-        iconpath = get_icon_path(icon)
+        icon = application_config[app].get("icon", "default")
+        iconpath = iconcache.get(icon, "default")
         if "if" in application_config[app]:
             # pylint: disable=eval-used
             if not eval(application_config[app]["if"]):
                 continue
         if argp.use_wofi:
-            ret.append(
-                f"img:{iconpath}:text:{application_config[app]['description']}"
-            )
+            ret.append(f"img:{iconpath}:text:{application_config[app]['description']}")
         else:
-            ret.append(
-                f"{application_config[app]['description']}\0icon\x1f{iconpath}"
-            )
+            ret.append(f"{application_config[app]['description']}\0icon\x1f{iconpath}")
 
-    with subprocess.Popen(cmd,
-                          stdout=subprocess.PIPE,
-                          stdin=subprocess.PIPE,
-                          stderr=subprocess.PIPE) as popo:
+    with subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE
+    ) as popo:
         stringto = "\n".join(ret).encode()
         stdout = popo.communicate(input=stringto)[0]
         output = stdout.decode().strip()
@@ -281,11 +276,13 @@ def main():
     chosen = None
     chosen_id = 0
     for x in application_config:
-        if 'description' in application_config[x] and \
-                application_config[x]['description'] == output:
-                    chosen_id=x
-                    chosen=application_config[chosen_id]
-                    break
+        if (
+            "description" in application_config[x]
+            and application_config[x]["description"] == output
+        ):
+            chosen_id = x
+            chosen = application_config[chosen_id]
+            break
     if not chosen:
         raise Exception("Could not match the chosen one")
 
@@ -296,17 +293,18 @@ def main():
         cached_entries[chosen_id] = 0
     else:
         cached_entries[chosen_id] += 1
-    cache_file.write_text('\n'.join(
-        [f'{entry} {freq}' for entry, freq in cached_entries.items()]),
-                          encoding="utf-8")
+    cache_file.write_text(
+        "\n".join([f"{entry} {freq}" for entry, freq in cached_entries.items()]),
+        encoding="utf-8",
+    )
 
-    binarypath = pathlib.Path(chosen['binary']).expanduser()
+    binarypath = pathlib.Path(chosen["binary"]).expanduser()
     binary = shutil.which(binarypath)
     if not binary:
         print(f"Cannot find executable \"{chosen['binary']}\"")
         sys.exit(1)
 
-    args = chosen.get('args')
+    args = chosen.get("args")
 
     if args is None:
         if argp.print_only:
@@ -320,11 +318,14 @@ def main():
             print(" ".join([binary, *args]))
             return
 
-        os.execv(binary, [
+        os.execv(
             binary,
-            *args,
-        ])
+            [
+                binary,
+                *args,
+            ],
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
