@@ -256,7 +256,7 @@ def main():
     iconcache = cache_iconpath()
     for app in application_config:
         icon = application_config[app].get("icon", "default")
-        iconpath = iconcache.get(icon, "default")
+        iconpath = os.path.exists(icon) and icon or iconcache.get(icon, "default")
         if "if" in application_config[app]:
             # pylint: disable=eval-used
             if not eval(application_config[app]["if"]):
