@@ -102,7 +102,7 @@ def cache_iconpath():
     ret = {}
     for path in paths:
         for f in path.iterdir():
-            if f.suffix in (".png", "jpg"):
+            if f.suffix in (".svg", ".png", "jpg"):
                 fname = str(f.name).replace(f.suffix, "")
                 if fname not in ret:
                     ret[fname] = str(f.absolute())
