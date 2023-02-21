@@ -13,4 +13,4 @@ jobs:
       uses: actions/setup-python@v1
     - uses: actions/setup-python@v1
     - run: pip install pylint  # -r requirements.txt
-    - run: pylint **/*.py
+    - run: pylint *.py
