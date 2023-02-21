@@ -78,8 +78,12 @@ WOFI_ARGS = [
 ]
 
 
+class MounchExp(Exception):
+    pass
+
+
 def cache_iconpath():
-    def gpath(bpath: str, wildcards: str) -> str:
+    def gpath(bpath: str, wildcards: str) -> list[pathlib.Path]:
         return [
             pathlib.Path(x)
             for x in glob.glob(f"{os.path.expanduser(bpath)}/{wildcards}")
@@ -198,7 +202,8 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    application_config = yaml.safe_load(configfile.open("r", encoding="utf-8"))
+    with configfile.open("r", encoding="utf-8") as fp:
+        application_config = yaml.safe_load(fp)
     if argp.generate_desktop_entries:
         generate_desktop_entries(argp.generate_desktop_entries, application_config)
         sys.exit(0)
@@ -284,7 +289,7 @@ def main():
             chosen = application_config[chosen_id]
             break
     if not chosen:
-        raise Exception("Could not match the chosen one")
+        raise MounchExp("Could not match the chosen one")
 
     if not cache_file.parent.exists():
         cache_file.parent.mkdir(0o755)
@@ -310,18 +315,18 @@ def main():
         if argp.print_only:
             print(binary)
             return
-        os.execv(binary, [binary])
+        os.execv(binary, [str(binary)])
     else:
         if isinstance(args, str):
             args = [args]
         if argp.print_only:
-            print(" ".join([binary, *args]))
+            print(" ".join([str(binary), *args]))
             return
 
         os.execv(
             binary,
             [
-                binary,
+                str(binary),
                 *args,
             ],
         )
