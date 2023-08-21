@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.10
-      uses: actions/setup-python@v1
-    - uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
     - run: pip install pylint  # -r requirements.txt
     - run: pylint *.py
