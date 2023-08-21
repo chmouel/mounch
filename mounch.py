@@ -101,11 +101,11 @@ def cache_iconpath():
     paths += gpath("~/.local/share/icons", "/*/*/*")
     ret = {}
     for path in paths:
-        for f in path.iterdir():
-            if f.suffix in (".svg", ".png", "jpg"):
-                fname = str(f.name).replace(f.suffix, "")
+        for iconp in path.iterdir():
+            if iconp.suffix in (".svg", ".png", "jpg"):
+                fname = str(iconp.name).replace(iconp.suffix, "")
                 if fname not in ret:
-                    ret[fname] = str(f.absolute())
+                    ret[fname] = str(iconp.absolute())
     return ret
 
 
@@ -114,11 +114,11 @@ def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
     if not argp.no_defaults:
         if cmd == "rofi" and argp.rofi_theme:
             modified = []
-            for x in args:
-                if x == ROFI_THEME:
+            for arg in args:
+                if arg == ROFI_THEME:
                     modified.append(argp.rofi_theme)
                 else:
-                    modified.append(x)
+                    modified.append(arg)
             args = modified
         ret += args
     return ret
@@ -147,7 +147,7 @@ def parse_arguments():
         "-p",
         dest="print_only",
         action="store_true",
-        help='don\'t try to execute just print the command, usually would play nicely with "swaymsg exec"',
+        help="""don't try to execute just print the command, (combine this with "swaymsg exec")""",
     )
 
     parser.add_argument(
@@ -167,16 +167,16 @@ def generate_desktop_entries(directory: str, config: dict):
     if not dexpanded.exists():
         print(f"{dexpanded} does not exists")
         sys.exit(1)
-    for k, v in config.items():
-        if "nogenerate" in v:
+    for k, conf in config.items():
+        if "nogenerate" in conf:
             continue
-        arg = v["binary"]
-        if "args" in v:
-            arg += f" {' '.join(v['args'])}"
+        arg = conf["binary"]
+        if "args" in conf:
+            arg += f" {' '.join(conf['args'])}"
         entry = f"""[Desktop Entry]
 Type=Application
-Name={v['description']}
-Icon={v['icon']}
+Name={conf['description']}
+Icon={conf['icon']}
 Exec={arg}
 Terminal=false
 """
@@ -202,8 +202,8 @@ def main():
     if not configfile.exists():
         print("I could not find config file: ", configfile)
         sys.exit(1)
-    with configfile.open("r", encoding="utf-8") as fp:
-        application_config = yaml.safe_load(fp)
+    with configfile.open("r", encoding="utf-8") as filep:
+        application_config = yaml.safe_load(filep)
     if argp.generate_desktop_entries:
         generate_desktop_entries(argp.generate_desktop_entries, application_config)
         sys.exit(0)
@@ -280,12 +280,12 @@ def main():
 
     chosen = None
     chosen_id = 0
-    for x in application_config:
+    for app_config in application_config:
         if (
-            "description" in application_config[x]
-            and application_config[x]["description"] == output
+            "description" in application_config[app_config]
+            and application_config[app_config]["description"] == output
         ):
-            chosen_id = x
+            chosen_id = app_config
             chosen = application_config[chosen_id]
             break
     if not chosen:

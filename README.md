@@ -148,6 +148,9 @@ We cache all entries in a simple file in $HOME/.cache/mounch/cache, it's simple 
 Before launch we sort that list and display the top hit at the top and the rest as configured in the mounch.yaml config file.
 After launch we increase the counter and rewrite the cache file.
 
+## Alternatives
+
+I rewrote it in rust, with a bit different syntax and focused to wofi/wayland called raffi and available here https://github.com/chmouel/raffi. This python version goes as fast as the rust version, there is no reason to switch if you don't care.
 
 ## Misc
 
