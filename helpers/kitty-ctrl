@@ -44,19 +44,18 @@ if [[ -n ${2:-""} && $1 == "jump" ]];then
     shift $((OPTIND-1))
 
     [[ -z ${title} ]] && title=${1^}
-    args=$*
     if ! pgrep kitty >/dev/null || [[ -z ${socket} ]];then
-        exec /usr/bin/kitty "${args}" &
+        exec /usr/bin/kitty $@
         exit 0
     fi
 
-    kitty @ focus-window --match title:"$title" 2>/dev/null || {
-        kitty @ launch --type=tab --tab-title "${title}" --title "${title}" ${args} &&
-            kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1
-    }
+    kitty @ launch --type=tab --tab-title "${title}" --title "${title}" /bin/bash -c "${@}" &&
+        kitty @ focus-window --match title:"${title}"  >${TMP} 2>&1
+            [[ -n $SWAYSOCK ]] && sway-focus kitty
     exit
 elif ! pgrep kitty >/dev/null;then
-    exec /usr/bin/kitty "$@" &
+    echo $@
+    exec /usr/bin/kitty "/bin/bash -c $@" &
     exit 0
 fi
 
