@@ -94,15 +94,16 @@ def cache_iconpath():
         pathlib.Path("/usr/share/icons"),
         pathlib.Path("/usr/share/pixmaps"),
     ]
-    paths += gpath("/usr/share/icons", "/*/64x64/*")
-    paths += gpath("/usr/share/icons", "/*/48x48/*")
-    paths += gpath("/usr/share/icons", "/*/apps/48")
-    paths += gpath("/usr/share/icons", "/*/apps/64")
-    paths += gpath("~/.local/share/icons", "/*/*/*")
+    paths += gpath("/usr/share/icons", "*/64x64/*")
+    paths += gpath("/usr/share/icons", "*/48x48/*")
+    paths += gpath("/usr/share/icons", "*/*/apps")
+    paths += gpath("/usr/share/icons", "*/apps/48")
+    paths += gpath("/usr/share/icons", "*/apps/64")
+    paths += gpath("~/.local/share/icons", "*/*/*")
     ret = {}
     for path in paths:
         for iconp in path.iterdir():
-            if iconp.suffix in (".svg", ".png", "jpg"):
+            if iconp.suffix in (".svg", ".png", ".jpg"):
                 fname = str(iconp.name).replace(iconp.suffix, "")
                 if fname not in ret:
                     ret[fname] = str(iconp.absolute())
