@@ -50,7 +50,7 @@ import argparse
 import collections
 import glob
 import os
-import pathlib
+from pathlib import Path
 import shutil
 import subprocess
 import sys
@@ -83,16 +83,17 @@ class MounchExp(Exception):
 
 
 def cache_iconpath():
-    def gpath(bpath: str, wildcards: str) -> list[pathlib.Path]:
+    def gpath(bpath: str, wildcards: str) -> list[Path]:
         return [
-            pathlib.Path(x)
+            Path(x)
             for x in glob.glob(f"{os.path.expanduser(bpath)}/{wildcards}")
+            if Path(x).is_dir()
         ]
 
     paths = [
-        pathlib.Path("~/.local/share/icons/").expanduser(),
-        pathlib.Path("/usr/share/icons"),
-        pathlib.Path("/usr/share/pixmaps"),
+        Path("~/.local/share/icons/").expanduser(),
+        Path("/usr/share/icons"),
+        Path("/usr/share/pixmaps"),
     ]
     paths += gpath("/usr/share/icons", "*/64x64/*")
     paths += gpath("/usr/share/icons", "*/48x48/*")
@@ -164,7 +165,7 @@ def parse_arguments():
 
 
 def generate_desktop_entries(directory: str, config: dict):
-    dexpanded: pathlib.Path = pathlib.Path(directory).expanduser()
+    dexpanded: Path = Path(directory).expanduser()
     if not dexpanded.exists():
         print(f"{dexpanded} does not exists")
         sys.exit(1)
@@ -196,8 +197,8 @@ def main():
         print("we can't have both rofi and wofi")
         sys.exit(1)
 
-    cache_file = pathlib.Path("~/.cache/mounch/cache").expanduser()
-    configfile = pathlib.Path("~/.config/mounch/mounch.yaml").expanduser()
+    cache_file = Path("~/.cache/mounch/cache").expanduser()
+    configfile = Path("~/.config/mounch/mounch.yaml").expanduser()
     cached_entries = {}
 
     if not configfile.exists():
@@ -304,7 +305,7 @@ def main():
         encoding="utf-8",
     )
 
-    binarypath = pathlib.Path(chosen["binary"]).expanduser()
+    binarypath = Path(chosen["binary"]).expanduser()
     binary = shutil.which(binarypath)
     if not binary:
         print(f"Cannot find executable \"{chosen['binary']}\"")
