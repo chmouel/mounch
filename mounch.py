@@ -68,7 +68,7 @@ WOFI_ARGS = [
     "-d",
     "-G",
     "-I",
-    "--alow-images",
+    "--allow-images",
     "--allow-markup",
     "-W",
     "500",
