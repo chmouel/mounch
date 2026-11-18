@@ -111,6 +111,11 @@ def cache_iconpath():
     return ret
 
 
+def expand_path(arg: str) -> str:
+    """Expand environment variables and a leading `~` in a path."""
+    return os.path.expanduser(os.path.expandvars(arg))
+
+
 def get_command(cmd: str, args: list, argp: argparse.Namespace) -> list:
     ret = [cmd] + [PROMPT_ARG] + [argp.prompt]
     if not argp.no_defaults:
@@ -258,6 +263,7 @@ def main():
     iconcache = cache_iconpath()
     for app in application_config:
         icon = application_config[app].get("icon", "default")
+        icon = expand_path(icon)
         iconpath = os.path.exists(icon) and icon or iconcache.get(icon, "default")
         if "if" in application_config[app]:
             # pylint: disable=eval-used
@@ -321,6 +327,7 @@ def main():
     else:
         if isinstance(args, str):
             args = [args]
+        args = [expand_path(str(arg)) for arg in args]
         if argp.print_only:
             print(" ".join([str(binary), *args]))
             return
