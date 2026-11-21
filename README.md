@@ -10,7 +10,7 @@ You simply define a set of configuration blocks for some custom commands and it 
 Why not just use [dmenu](https://frasertweedale.github.io/blog-redhat/posts/2020-12-01-openshift-crio-userns.html#creating-a-user-namespaced-pod---attempt-4) rofi module you may ask ?
 
 * I simply did not want to have to create a `.desktop` file for every apps I have, and find it much simpler to have everything in  a simple yaml definition.
-* I did not want to have the launcher offering everythign I have on my system
+* I did not want to have the launcher offering everything I have on my system
 * I wanted a curated list
 * I wanted some title that differs from what's shipped on the .desktop from the system.
 * I switch often between desktop/wm (ie: gnome/sway) and display system (xorg/wayland) and I want entries depending of the current environement
